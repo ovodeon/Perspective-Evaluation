@@ -9,13 +9,29 @@
 </head>
 <body>
 
+    <!-- Hidden audio element for the meditative frequency -->
+    <audio id="bg-audio" loop>
+        <source src="binaural-focus.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="quiz-container">
-        <div id="quiz-view" class="fade-element">
+        <!-- Start/Intro Screen -->
+        <div id="start-view" class="fade-element visible">
+            <div class="progress-indicator">An Internal Audit</div>
+            <div class="question-text" style="margin-bottom: 2rem;">
+                Before we begin... drop any expectations of a standard test. We are mapping the quiet, unexamined currents behind your choices. Find a still space... enter when ready.
+            </div>
+            <button class="share-btn" onclick="startEvaluation()">Begin Evaluation</button>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="quiz-view" class="fade-element" style="display: none;">
             <div class="progress-indicator" id="progress">01 / 06</div>
             <div class="question-text" id="question">Loading dynamic landscape...</div>
             <div class="options-stack" id="options"></div>
         </div>
 
+        <!-- Results View -->
         <div id="results-view" class="fade-element" style="display: none;">
             <div id="capture-zone" class="share-card">
                 <div class="progress-indicator">Evaluation Complete</div>
@@ -29,7 +45,6 @@
                     </div>
                 </div>
             </div>
-
             <button class="share-btn" onclick="generateShareImage()">Generate Story Image</button>
         </div>
     </div>
