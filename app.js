@@ -2,12 +2,31 @@ let currentStep = 0;
 let userScore = { landscape: 0, operation: 0 };
 
 const views = {
+    start: document.getElementById('start-view'),
     quiz: document.getElementById('quiz-view'),
     results: document.getElementById('results-view'),
     progress: document.getElementById('progress'),
     question: document.getElementById('question'),
-    options: document.getElementById('options')
+    options: document.getElementById('options'),
+    audio: document.getElementById('bg-audio')
 };
+
+// Triggers the transition out of the start screen and starts the audio loop
+function startEvaluation() {
+    views.start.classList.remove('visible');
+    
+    // Start background focus audio gently
+    if (views.audio) {
+        views.audio.volume = 0.4; // Keeps the track ambient and unobtrusive
+        views.audio.play().catch(err => console.log("Audio autoplay prevented until further interaction."));
+    }
+
+    setTimeout(() => {
+        views.start.style.display = 'none';
+        views.quiz.style.display = 'block';
+        displayQuestion(0);
+    }, 1200);
+}
 
 function displayQuestion(index) {
     views.quiz.classList.remove('visible');
@@ -27,7 +46,7 @@ function displayQuestion(index) {
         });
 
         views.quiz.classList.add('visible');
-    }, 400); 
+    }, 600); 
 }
 
 function handleSelection(qIndex, optIndex) {
@@ -50,25 +69,19 @@ function transitionToResults() {
         views.quiz.style.display = 'none';
         views.results.style.display = 'flex';
         
-        let name = "";
-        let desc = "";
-        
+        let profile;
         if (userScore.landscape <= 0 && userScore.operation <= 0) {
-            name = "The Silent Anchor";
-            desc = "You navigate by depth rather than expanse... finding clarity in the architecture of the subterranean, choosing localized resonance over systemic noise.";
+            profile = archetypes.silentAnchor;
         } else if (userScore.landscape <= 0 && userScore.operation > 0) {
-            name = "The Internal Alchemist";
-            desc = "A rare convergence... you hold a deeply quiet inner sanctuary, yet you utilize it as a high-precision lens to spark catalytic shifts in your immediate orbit.";
+            profile = archetypes.internalAlchemist;
         } else if (userScore.landscape > 0 && userScore.operation <= 0) {
-            name = "The Systemic Cartographer";
-            desc = "You observe from a panoramic vantage... tracing the grand design and historical currents with detached, beautiful, structural clarity.";
+            profile = archetypes.systemicCartographer;
         } else {
-            name = "The Cosmic Disruptor";
-            desc = "You find alignment only within momentum... stepping directly into the storm of experience, choosing intentional chaos over structured stagnation.";
+            profile = archetypes.cosmicDisruptor;
         }
 
-        document.getElementById('archetype-name').innerText = name;
-        document.getElementById('archetype-desc').innerText = desc;
+        document.getElementById('archetype-name').innerText = profile.name;
+        document.getElementById('archetype-desc').innerText = profile.desc;
         
         document.getElementById('left-metric').innerText = userScore.landscape <= 0 ? "Depth Alignment" : "Horizon Alignment";
         document.getElementById('right-metric').innerText = userScore.operation <= 0 ? "Contemplative Balance" : "Catalytic Flow";
@@ -76,18 +89,18 @@ function transitionToResults() {
         setTimeout(() => {
             views.results.classList.add('visible');
         }, 100);
-    }, 600);
+    }, 1200);
 }
 
 function generateShareImage() {
     const targetElement = document.getElementById("capture-zone");
     const actionButton = document.querySelector(".share-btn");
 
-    actionButton.innerText = "Encoding Canvas...";
+    actionButton.innerText = "Encoding Viewports...";
     actionButton.style.opacity = "0.5";
 
     html2canvas(targetElement, {
-        backgroundColor: "#101112",
+        backgroundColor: "#0f1011",
         scale: 2,
         logging: false,
         useCORS: true
@@ -104,11 +117,7 @@ function generateShareImage() {
         actionButton.innerText = "Generate Story Image";
         actionButton.style.opacity = "1";
     }).catch(err => {
-        console.error("Capture sequence failed:", err);
+        console.error("Capture failed:", err);
         actionButton.innerText = "Generation Error";
     });
 }
-
-window.onload = () => {
-    displayQuestion(0);
-};
